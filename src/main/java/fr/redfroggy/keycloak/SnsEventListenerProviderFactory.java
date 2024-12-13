@@ -1,15 +1,14 @@
 package fr.redfroggy.keycloak;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jboss.logging.Logger;
 import org.keycloak.Config;
 import org.keycloak.events.EventListenerProvider;
 import org.keycloak.events.EventListenerProviderFactory;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.KeycloakSessionFactory;
+import software.amazon.awssdk.services.sns.SnsClient;
 
-import com.amazonaws.services.sns.AmazonSNSAsync;
-import com.amazonaws.services.sns.AmazonSNSAsyncClientBuilder;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 public class SnsEventListenerProviderFactory implements EventListenerProviderFactory {
@@ -26,9 +25,9 @@ public class SnsEventListenerProviderFactory implements EventListenerProviderFac
 
     @Override
     public EventListenerProvider create(KeycloakSession session) {
-        AmazonSNSAsync snsClient = AmazonSNSAsyncClientBuilder.standard().build();
+        SnsClient snsClient = SnsClient.builder().build();
         ObjectMapper mapper = new ObjectMapper();
-        return new SnsEventListenerProvider(new SnsEventPublisher(snsClient, snsEventListenerConfiguration, mapper), session.getTransactionManager(), session.users(), session.realms());
+        return new SnsEventListenerProvider(new SnsEventPublisher(snsClient, snsEventListenerConfiguration, mapper), session.users(), session.realms());
     }
 
     @Override
@@ -46,7 +45,7 @@ public class SnsEventListenerProviderFactory implements EventListenerProviderFac
     }
 
     @Override
-    public void postInit(KeycloakSessionFactory sessionFactory) {        
+    public void postInit(KeycloakSessionFactory sessionFactory) {
     }
 
 }

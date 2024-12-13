@@ -58,7 +58,7 @@ with docker-compose:
 1. package the code with aws dependencies, use maven 'docker-compose' profile to package 
 
 ```bash
-mvn package -P docker-compose
+mvn -Dmaven.test.skip=true clean package -P docker-compose
 docker-compose up -d
 ```
 
